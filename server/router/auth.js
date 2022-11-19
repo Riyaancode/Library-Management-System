@@ -10,9 +10,9 @@ router.get('/', (req , res)=>{
 
 router.post('/register', async (req,res)=>{
 
-    const {name,email, pass} = req.body;
+    const {username,email,password,userType,DOB,image} = req.body;
 
-    if (!name || !email || !pass) {
+    if (!username || !email || !password || !userType || !image) {
         return res.status(422).json({error:"Please filled the all field"});
     }
 
@@ -23,7 +23,7 @@ router.post('/register', async (req,res)=>{
             return res.status(422).json({error:"Email already exist!"});
         }
 
-        const user = new Users({name,email,pass});
+        const user = new Users({username,email,password,userType,DOB,image});
 
         const userReg = await  user.save();
         if (userReg) {
