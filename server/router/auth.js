@@ -8,7 +8,7 @@ router.get('/', (req , res)=>{
     res.send('This is home from router');
 })
 
-router.post('/register', (req,res)=>{
+router.post('/register', async (req,res)=>{
 
     const {name,email, pass} = req.body;
 
@@ -16,18 +16,33 @@ router.post('/register', (req,res)=>{
         return res.status(422).json({error:"Please filled the all field"});
     }
 
-    Users.findOne({email: email}).then((userExist) =>{
+    try {
+        const userExist = await Users.findOne({email: email})
+
         if(userExist){
             return res.status(422).json({error:"Email already exist!"});
         }
 
         const user = new Users({name,email,pass});
 
-        user.save().then(()=>{
+        const userReg = await  user.save();
+        if (userReg) {
             res.status(201).json({messa:"user registered sucessfully"});
-        }).catch((error)=> res.status(500).json({error:"registration failed"}))
+        }
+    } catch (error) {
+        console.log(error)
+    }
+
+    // Users.findOne({email: email})
+    
+    // .then((userExist) =>{
+       
+
+    //    .then(()=>{
+           
+    //     }).catch((error)=> res.status(500).json({error:"registration failed"}))
         
-    }).catch((error)=>{console.log(error)});
+    // }).catch((error)=>{});
 
     // console.log(name);
     // console.log(email);
