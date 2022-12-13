@@ -14,18 +14,18 @@ const BooksSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  image:{
-    type: String,
-    required: true
-  },
-  stock:{
+  // image:{
+  //   type: String,
+  //   required: true
+  // },
+  stocks:{
     type: Number,
     required: true
   },
-  availableBooks:{
-    type: Number,
-    required: true
-  },
+  // availableBooks:{
+  //   type: Number,
+  //   required: true
+  // },
   ratings:{
     type: Number,
     required: true
