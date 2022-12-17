@@ -1,10 +1,24 @@
 const express = require('express');
 const router = express.Router();
-
+const multer  = require('multer')
 
 require('../db/conn');
 const Users = require('../model/UsersSchema')
 const Books = require('../model/BooksSchema')
+
+router.use(express.json())
+
+const Storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, '../client/src/uploads')
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname)
+    }
+  })
+  
+  const upload = multer({ storage: Storage }).single('booksImage')
+
 
 router.get('/', (req, res) => {
     res.send('This is home from router');
@@ -57,17 +71,31 @@ router.post('/register', async (req, res) => {
 
 
 
-router.post('/addbooksdata', async (req, res) => {
 
-    const {
-        title,
-        author,
-        publisher,
-        stocks,
-        ratings
-    } = req.body;
 
-    if (!title || !author || !publisher || !stocks || !ratings) {
+router.delete('/books/:bookId', async (req,res)=>{
+    console.log(req.params);
+    try {
+      const books = await Books.findByIdAndDelete(req.params.bookId);
+      console.log(books);
+      res.json(books);
+    } catch (error) {
+      res.json({ message: error });
+    }
+})
+
+router.post('/addbooksdata', (req, res) => {
+
+    upload(req,res, async (err)=>{
+        if (!err) {
+          
+
+    const {title, author, publisher, stocks, ratings} = req.body;
+    const image = req.file.originalname;
+
+    console.log(image)
+
+    if (!title || !author || !publisher || !stocks || !ratings || !image) {
         return res.status(422).json({ error: "Please filled the all field" });
     }
 
@@ -77,6 +105,7 @@ router.post('/addbooksdata', async (req, res) => {
             title,
             author,
             publisher,
+            image,
             stocks,
             ratings
         });
@@ -88,7 +117,10 @@ router.post('/addbooksdata', async (req, res) => {
     } catch (error) {
         console.log(error)
     }
-
+} else {
+    console.log(err)
+}
+})
 
 })
 
@@ -135,13 +167,11 @@ router.get('/getbooksdata', async (req, res) => {
        const BooksData = await Books.find()
 
        if (BooksData) {
-        res.status(200).json({Books: BooksData})
+        res.status(200).json(BooksData)
        } else {
         res.status(500).json({error:"Get dat faikled"})
        }
           
-       
-        
 
 
     } catch (error) {

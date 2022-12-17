@@ -8,16 +8,16 @@ const BooksSchema = new mongoose.Schema({
   },
   author:{
     type: String,
-    required: true
+    // required: true
   },
   publisher:{
     type: String,
     required: true
   },
-  // image:{
-  //   type: String,
-  //   required: true
-  // },
+  image:{
+    type: String,
+    // required: true
+  },
   stocks:{
     type: Number,
     required: true
